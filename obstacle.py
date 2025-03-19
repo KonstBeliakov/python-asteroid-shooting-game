@@ -1,7 +1,9 @@
 import pygame
-from random import randrange
+from random import randrange, randint
+from math import pi, sin, cos
 
 from object import Object
+from utils import *
 
 
 class Obstacle(Object):
@@ -14,21 +16,53 @@ class Obstacle(Object):
         self.hp = 100
         self.max_hp = 100
 
+        self.vertex_number = 10
+        self.d = [randint(1, 3) * 10 for _ in range(self.vertex_number)]
+
+        self.not_active_color = (0, 50, 120)
+
     def update(self, game):
         super().update(game)
-        if self.outside_screen(game):
+        if self.outside_screen(game) or self.hp <= 0:
             self.active = False
 
+        if polygons_intersect(self.get_polygon(), game.player.get_polygon()):
+            game.player.hp -= 100
+
     def draw(self, screen):
-        super().draw(screen)
+        #super().draw(screen)
 
-        f = min(1.0, max(0.0, self.hp / self.max_hp))
-        full_color = (0, 50, 150)
-        empty_color = (0, 150, 0)
+        points = self.get_polygon()
+        inner_points = self.get_inner_polygon()
 
-        color = (int(f * full_color[0] + (1 - f) * empty_color[0]),
-                 int(f * full_color[1] + (1 - f) * empty_color[1]),
-                 int(f * full_color[2] + (1 - f) * empty_color[2]))
+        point_number = int(self.vertex_number * (self.hp / self.max_hp))
 
-        pygame.draw.rect(screen, (50, 150, 250), (self.x, self.y - 10, self.sizeX * f, 7))
-        pygame.draw.rect(screen,  color, (self.x + 1, self.y - 9, (self.sizeX - 2) * f, 5))
+        points1 = points[:point_number]
+        if len(points1) >= 2:
+            pygame.draw.lines(screen, self.color, False, points1, 2)
+
+        points2 = points[point_number-1:] + [points[0]]
+        if len(points2) >= 2:
+            pygame.draw.lines(screen, self.not_active_color, False, points2, 2)
+
+        pygame.draw.polygon(screen, self.color, inner_points, 2)
+
+    def get_polygon(self):
+        points = []
+
+        for i in range(self.vertex_number):
+            angle = 2 * pi / self.vertex_number * i
+            points.append([self.x + sin(angle) * (self.d[i] + 5),
+                           self.y + cos(angle) * (self.d[i] + 5)])
+
+        return points
+
+    def get_inner_polygon(self):
+        inner_points = []
+
+        for i in range(self.vertex_number):
+            angle = 2 * pi / self.vertex_number * i
+            inner_points.append([self.x + sin(angle) * self.d[i],
+                                 self.y + cos(angle) * self.d[i]])
+
+        return inner_points

@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 from obstacle import Obstacle
@@ -18,6 +20,9 @@ class Game:
 
         self.bullets: list[Bullet] = []
         self.obstacles = [Obstacle(self) for _ in range(5)]
+
+        self.obsticle_spawn_delay = 2
+        self.last_added_obsticles = time.perf_counter()
 
     def update(self):
         for event in pygame.event.get():
@@ -53,4 +58,6 @@ class Game:
         pygame.display.flip()
 
     def add_new_obsticles(self):
-        pass
+        if time.perf_counter() - self.last_added_obsticles > self.obsticle_spawn_delay:
+            self.last_added_obsticles = time.perf_counter()
+            self.obstacles.append(Obstacle(self))

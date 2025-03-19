@@ -16,6 +16,8 @@ class Player(Object):
 
         self.last_shot = time.perf_counter()
 
+        self.hp = 100
+
     def update(self, game):
         super().update(game)
 
@@ -31,6 +33,9 @@ class Player(Object):
 
         if keys[pygame.K_SPACE]:
             self.shoot(game)
+
+        if self.hp <= 0:
+            game.over = True
 
     def shoot(self, game):
         if time.perf_counter() - self.last_shot > self.shooting_delay:

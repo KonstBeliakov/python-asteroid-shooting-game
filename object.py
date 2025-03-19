@@ -29,3 +29,9 @@ class Object:
 
     def outside_screen(self, game):
         return self.x < -self.sizeX or self.y < -self.sizeY or self.x > game.WIDTH or self.y > game.HEIGHT
+
+    def get_polygon(self):
+        return [[self.x, self.y],
+                [self.x, self.y + self.sizeY],
+                [self.x + self.sizeX, self.y + self.sizeY],
+                [self.x + self.sizeX, self.y]]
