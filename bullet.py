@@ -10,5 +10,5 @@ class Bullet(Object):
     def update(self, game):
         super().update(game)
         
-        if self.x < -self.sizeX or self.y < -self.sizeY or self.x > game.WIDTH or self.y > game.HEIGHT:
+        if self.outside_screen(game):
             self.active = False

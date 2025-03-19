@@ -1,5 +1,6 @@
 import pygame
 
+from obstacle import Obstacle
 from player import Player
 from bullet import Bullet
 
@@ -16,6 +17,7 @@ class Game:
         self.player = Player()
 
         self.bullets: list[Bullet] = []
+        self.obstacles = [Obstacle(self) for _ in range(5)]
 
     def update(self):
         for event in pygame.event.get():
@@ -27,9 +29,16 @@ class Game:
         for bullet in self.bullets:
             bullet.update(self)
 
-        for i in range(len(self.bullets)-1, -1, -1):
-            if not self.bullets[i].active:
-                del self.bullets[i]
+        for obsticle in self.obstacles:
+            obsticle.update(self)
+
+        # deleting not active objects
+        for lst in self.bullets, self.obstacles:
+            for i in range(len(lst)-1, -1, -1):
+                if not lst[i].active:
+                    del lst[i]
+
+        self.add_new_obsticles()
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -38,4 +47,10 @@ class Game:
         for bullet in self.bullets:
             bullet.draw(self.screen)
 
+        for obstacle in self.obstacles:
+            obstacle.draw(self.screen)
+
         pygame.display.flip()
+
+    def add_new_obsticles(self):
+        pass

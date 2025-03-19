@@ -3,7 +3,7 @@ import pygame
 
 
 class Object:
-    def __init__(self, x=0, y=0, sizeX=100, sizeY=100, speedX=0, speedY=0):
+    def __init__(self, x=0, y=0, sizeX=30, sizeY=30, speedX=0, speedY=0):
         self.x = x
         self.y = y
         self.sizeX = sizeX
@@ -26,3 +26,6 @@ class Object:
 
         self.x += self.speedX * self.time_since_updated
         self.y += self.speedY * self.time_since_updated
+
+    def outside_screen(self, game):
+        return self.x < -self.sizeX or self.y < -self.sizeY or self.x > game.WIDTH or self.y > game.HEIGHT
