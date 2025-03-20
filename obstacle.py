@@ -1,8 +1,9 @@
 import pygame
 from random import randrange, randint
-from math import pi, sin, cos
+from math import pi, sin, cos, atan2
 
 from object import Object
+from shard import Shard
 from utils import *
 
 
@@ -23,13 +24,16 @@ class Obstacle(Object):
 
     def update(self, game):
         super().update(game)
-        if self.outside_screen(game) or self.hp <= 0:
+        if self.outside_screen(game):
             self.active = False
+
+        if self.hp <= 0:
+            self.destroy(game)
 
         if polygons_intersect(self.get_polygon(), game.player.get_polygon()):
             game.player.hp -= 100
 
-    def draw(self, screen):
+    def draw(self, game):
         #super().draw(screen)
 
         points = self.get_polygon()
@@ -39,13 +43,13 @@ class Obstacle(Object):
 
         points1 = points[:point_number]
         if len(points1) >= 2:
-            pygame.draw.lines(screen, self.color, False, points1, 2)
+            pygame.draw.lines(game.screen, self.color, False, points1, 2)
 
         points2 = points[point_number-1:] + [points[0]]
         if len(points2) >= 2:
-            pygame.draw.lines(screen, self.not_active_color, False, points2, 2)
+            pygame.draw.lines(game.screen, self.not_active_color, False, points2, 2)
 
-        pygame.draw.polygon(screen, self.color, inner_points, 2)
+        pygame.draw.polygon(game.screen, self.color, inner_points, 2)
 
     def get_polygon(self):
         points = []
@@ -66,3 +70,20 @@ class Obstacle(Object):
                                  self.y + cos(angle) * self.d[i]])
 
         return inner_points
+
+    def destroy(self, game):
+        self.active = False
+        inner_polygon = self.get_inner_polygon()
+        inner_polygon.append(inner_polygon[0])
+
+        for i in range(len(inner_polygon) - 1):
+            speed = 50
+
+            dx = (inner_polygon[i][0] + inner_polygon[i+1][0]) / 2 - self.x
+            dy = (inner_polygon[i][1] + inner_polygon[i+1][1]) / 2 - self.y
+
+            angle = atan2(dx, dy)
+            speedX = speed * sin(angle)
+            speedY = speed * cos(angle)
+
+            game.shards.append(Shard(inner_polygon[i], inner_polygon[i + 1], speedX=speedX, speedY=speedY))

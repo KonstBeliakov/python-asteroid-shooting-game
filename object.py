@@ -17,8 +17,8 @@ class Object:
 
         self.active = True
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.sizeX, self.sizeY))
+    def draw(self, game):
+        pygame.draw.rect(game.screen, self.color, (self.x, self.y, self.sizeX, self.sizeY))
 
     def update(self, game):
         self.time_since_updated = time.perf_counter() - self.last_updated

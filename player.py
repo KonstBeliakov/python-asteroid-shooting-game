@@ -8,7 +8,7 @@ from bullet import Bullet
 
 class Player(Object):
     def __init__(self):
-        super().__init__(sizeX=30, sizeY=60)
+        super().__init__(x=300, y=300, sizeX=30, sizeY=60)
         self.speed = 300
         self.shooting_delay = 0.5
 

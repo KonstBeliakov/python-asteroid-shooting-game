@@ -1,5 +1,6 @@
 import pygame
 from shapely.geometry import Polygon
+import numpy as np
 
 
 def draw_progress_bar(screen, x, y, volume, max_volume, sizeX, full_color=(0, 50, 150), empty_color=(0, 150, 0)):
@@ -19,3 +20,18 @@ def polygons_intersect(poly1, poly2):
     polygon1 = Polygon(poly1)
     polygon2 = Polygon(poly2)
     return polygon1.intersects(polygon2)
+
+
+def darken_surface(surface, factor):
+    arr = pygame.surfarray.pixels3d(surface).astype(np.float32)
+
+    arr[0] *= factor
+    arr[1] *= factor
+    arr[2] *= factor
+
+    arr = arr.clip(0, 255).astype(np.uint8)
+
+    new_surface = pygame.Surface(surface.get_size())
+    pygame.surfarray.blit_array(new_surface, arr)
+
+    return new_surface
