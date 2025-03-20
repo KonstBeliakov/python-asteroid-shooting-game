@@ -4,6 +4,7 @@ from math import pi, sin, cos, atan2
 
 from object import Object
 from shard import Shard
+from coin import Coin
 from utils import *
 
 
@@ -34,8 +35,6 @@ class Obstacle(Object):
             game.player.hp -= 100
 
     def draw(self, game):
-        #super().draw(screen)
-
         points = self.get_polygon()
         inner_points = self.get_inner_polygon()
 
@@ -87,3 +86,5 @@ class Obstacle(Object):
             speedY = speed * cos(angle)
 
             game.shards.append(Shard(inner_polygon[i], inner_polygon[i + 1], speedX=speedX, speedY=speedY))
+
+        game.coins.append(Coin(x=self.x, y=self.y, speedX=self.speedX, speedY=self.speedY))
